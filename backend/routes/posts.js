@@ -1,30 +1,31 @@
-const express = require('express');
-const router = express.Router();
-const Post = require('../models/Post');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
 
-// GET all posts
-router.get('/', async (req, res) => {
-  const posts = await Post.find();
-  res.json(posts);
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Root route (for testing)
+app.get("/", (req, res) => {
+  res.send("Backend API is running 🚀");
 });
 
-// ADD post
-router.post('/', async (req, res) => {
-  const newPost = new Post(req.body);
-  await newPost.save();
-  res.json(newPost);
-});
+// Routes
+app.use("/api/posts", require("./routes/postRoutes"));
 
-// UPDATE post
-router.put('/:id', async (req, res) => {
-  const updated = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updated);
-});
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-// DELETE post
-router.delete('/:id', async (req, res) => {
-  await Post.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted" });
-});
+// Port
+const PORT = process.env.PORT || 4000;
 
-module.exports = router;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
