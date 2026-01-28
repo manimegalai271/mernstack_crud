@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Root route
+// Root route (for Render test)
 app.get("/", (req, res) => {
   res.send("Backend API is running 🚀");
 });
@@ -21,7 +21,7 @@ app.use("/api/posts", require("./routes/posts"));
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err) => console.error("MongoDB error:", err));
 
 // Port
 const PORT = process.env.PORT || 4000;
